@@ -10,7 +10,7 @@
 }
 
 .box {
-    min-height: 100px;
-    min-width: 100px;
+    min-height: 6vw;
+    min-width: 6vw;
     border: 2px solid black;
 }
