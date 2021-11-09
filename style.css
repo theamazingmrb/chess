@@ -1,0 +1,16 @@
+#board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-columns: repeat(8, 1fr);
+    max-width: .5vw;
+}
+
+#board img {
+    max-width: 100%;
+}
+
+.box {
+    min-height: 100px;
+    min-width: 100px;
+    border: 2px solid black;
+}
