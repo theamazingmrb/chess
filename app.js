@@ -129,6 +129,20 @@ let moveKey = {
             }
         }
     },
+    queen: {
+        moves: {
+            1: {
+                x: 1,
+                y: -1
+            },
+        },
+        attacks: {
+            1: {
+                x: 1,
+                y: -1
+            }
+        }
+    },
     king: {
         moves: {
             1: {
@@ -299,6 +313,12 @@ class Peice {
                     moves = [...moves, ...horizontals]
                     continue
                 }
+                if (this.name === 'queen') {
+                    let horizontals = this.getHorizontals()
+                    let diagnals = this.getDiagnals()
+                    moves = [...moves, ...horizontals, ...diagnals]
+                    continue
+                }
             } else {
                 newX = parseInt(x) - moveKey[this.name]['moves'][key].x
                 newY = parseInt(y) - moveKey[this.name]['moves'][key].y
@@ -312,6 +332,12 @@ class Peice {
                 if (this.name === 'rook') {
                     let horizontals = this.getHorizontals()
                     moves = [...moves, ...horizontals]
+                    continue
+                }
+                if (this.name === 'queen') {
+                    let horizontals = this.getHorizontals()
+                    let diagnals = this.getDiagnals()
+                    moves = [...moves, ...horizontals, ...diagnals]
                     continue
                 }
             }
@@ -353,6 +379,32 @@ class Peice {
                     })
                     break
                 }
+
+                if (this.name === 'queen') {
+                    let horizontals = this.getHorizontals()
+                    let diagnals = this.getDiagnals()
+
+                    // set diagnal attacks
+                    horizontals.forEach(pair => {
+                        let [dx, dy] = pair
+                        let squareToAttack = game.grid[dx][dy]
+                        if (squareToAttack && squareToAttack !== '' && squareToAttack.color !== this.color) {
+                            attacks.add(`${dx}-${dy}`)
+                        }
+
+                    })
+
+                    diagnals.forEach(pair => {
+                        let [dx, dy] = pair
+                        let squareToAttack = game.grid[dx][dy]
+                        if (squareToAttack && squareToAttack !== '' && squareToAttack.color !== this.color) {
+                            attacks.add(`${dx}-${dy}`)
+                        }
+
+                    })
+
+                    break
+                }
             } else {
                 newX = parseInt(x) - moveKey[this.name]['attacks'][key].x
                 newY = parseInt(y) - moveKey[this.name]['attacks'][key].y
@@ -381,6 +433,32 @@ class Peice {
                         }
 
                     })
+                    break
+                }
+
+                if (this.name === 'queen') {
+                    let horizontals = this.getHorizontals()
+                    let diagnals = this.getDiagnals()
+
+                    // set diagnal attacks
+                    horizontals.forEach(pair => {
+                        let [dx, dy] = pair
+                        let squareToAttack = game.grid[dx][dy]
+                        if (squareToAttack && squareToAttack !== '' && squareToAttack.color !== this.color) {
+                            attacks.add(`${dx}-${dy}`)
+                        }
+
+                    })
+
+                    diagnals.forEach(pair => {
+                        let [dx, dy] = pair
+                        let squareToAttack = game.grid[dx][dy]
+                        if (squareToAttack && squareToAttack !== '' && squareToAttack.color !== this.color) {
+                            attacks.add(`${dx}-${dy}`)
+                        }
+
+                    })
+
                     break
                 }
             }
