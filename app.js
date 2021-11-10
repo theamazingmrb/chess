@@ -115,6 +115,20 @@ let moveKey = {
             }
         }
     },
+    rook: {
+        moves: {
+            1: {
+                x: 1,
+                y: -1
+            },
+        },
+        attacks: {
+            1: {
+                x: 1,
+                y: -1
+            }
+        }
+    },
     king: {
         moves: {
             1: {
@@ -271,6 +285,8 @@ class Peice {
             if (this.name == 'pawn' && this.moves >= 1 && key == 2) continue
             let newX, newY
             if (this.color == 'BLACK') {
+                if (this.name == 'pawn' && this.moves == 0 && game.grid[x + 1][y] !== '') continue
+
                 newX = parseInt(x) + moveKey[this.name]['moves'][key].x
                 newY = parseInt(y) + moveKey[this.name]['moves'][key].y
                 if (this.name === 'bishop') {
@@ -278,13 +294,24 @@ class Peice {
                     moves = [...moves, ...diagnals]
                     continue
                 }
+                if (this.name === 'rook') {
+                    let horizontals = this.getHorizontals()
+                    moves = [...moves, ...horizontals]
+                    continue
+                }
             } else {
                 newX = parseInt(x) - moveKey[this.name]['moves'][key].x
                 newY = parseInt(y) - moveKey[this.name]['moves'][key].y
+                if (this.name == 'pawn' && this.moves == 0 && game.grid[x - 1][y] !== '') continue
 
                 if (this.name === 'bishop') {
                     let diagnals = this.getDiagnals()
                     moves = [...moves, ...diagnals]
+                    continue
+                }
+                if (this.name === 'rook') {
+                    let horizontals = this.getHorizontals()
+                    moves = [...moves, ...horizontals]
                     continue
                 }
             }
@@ -312,6 +339,20 @@ class Peice {
                     })
                     break
                 }
+
+                if (this.name === 'rook') {
+                    let horizontals = this.getHorizontals()
+                        // set diagnal attacks
+                    horizontals.forEach(pair => {
+                        let [dx, dy] = pair
+                        let squareToAttack = game.grid[dx][dy]
+                        if (squareToAttack && squareToAttack !== '' && squareToAttack.color !== this.color) {
+                            attacks.add(`${dx}-${dy}`)
+                        }
+
+                    })
+                    break
+                }
             } else {
                 newX = parseInt(x) - moveKey[this.name]['attacks'][key].x
                 newY = parseInt(y) - moveKey[this.name]['attacks'][key].y
@@ -325,6 +366,20 @@ class Peice {
                         if (squareToAttack && squareToAttack !== '' && squareToAttack.color !== this.color) {
                             attacks.add(`${dx}-${dy}`)
                         }
+                    })
+                    break
+                }
+
+                if (this.name === 'rook') {
+                    let horizontals = this.getHorizontals()
+                        // set diagnal attacks
+                    horizontals.forEach(pair => {
+                        let [dx, dy] = pair
+                        let squareToAttack = game.grid[dx][dy]
+                        if (squareToAttack && squareToAttack !== '' && squareToAttack.color !== this.color) {
+                            attacks.add(`${dx}-${dy}`)
+                        }
+
                     })
                     break
                 }
@@ -422,6 +477,77 @@ class Peice {
         [nextX, nextY] = this.location
         while (nextX < 7 && nextY < 7) {
             nextX += 1
+            nextY += 1
+            if (game.grid[nextX][nextY] !== "") {
+                if (game.grid[nextX][nextY].color == this.color) {
+                    break
+                } else {
+                    moves.push([nextX, nextY])
+                    break
+                }
+
+            }
+            moves.push([nextX, nextY])
+        }
+
+        return moves
+    }
+
+    getHorizontals() {
+        let moves = []
+
+        let [nextX, nextY] = this.location
+        while (nextX > 0) {
+            nextX -= 1
+
+            if (game.grid[nextX][nextY] !== "") {
+                if (game.grid[nextX][nextY].color == this.color) {
+                    break
+                } else {
+                    moves.push([nextX, nextY])
+                    break
+                }
+
+            }
+
+            moves.push([nextX, nextY])
+
+        }
+
+        [nextX, nextY] = this.location
+        while (nextX >= 0 && nextX < 7) {
+            nextX += 1
+            if (game.grid[nextX][nextY] !== "") {
+                if (game.grid[nextX][nextY].color == this.color) {
+                    break
+                } else {
+                    moves.push([nextX, nextY])
+                    break
+                }
+
+            }
+
+            moves.push([nextX, nextY])
+
+        }
+
+        [nextX, nextY] = this.location
+        while (nextY > 0) {
+            nextY -= 1
+            if (game.grid[nextX][nextY] !== "") {
+                if (game.grid[nextX][nextY].color == this.color) {
+                    break
+                } else {
+                    moves.push([nextX, nextY])
+                    break
+                }
+
+            }
+            moves.push([nextX, nextY])
+        }
+
+        [nextX, nextY] = this.location
+        while (nextY < 7) {
             nextY += 1
             if (game.grid[nextX][nextY] !== "") {
                 if (game.grid[nextX][nextY].color == this.color) {
