@@ -239,6 +239,7 @@ class Peice {
                 if (this.name === 'bishop') {
                     console.log('we got white bishop');
                     let diagnals = this.getDiagnals()
+                    console.log(diagnals)
                     moves = [...moves, ...diagnals]
                     console.log
                     continue
@@ -286,10 +287,10 @@ class Peice {
         let [newX, newY] = newCoordinates.split('-')
         let [oldX, oldY] = oldCoordinates.split('-')
         this.moves += 1
-        this.location = [newX, newY]
+        this.location = [parseInt(newX), parseInt(newY)]
         game.grid[newX][newY] = this
         game.grid[oldX][oldY] = ''
-        game.switchTurn()
+        // game.switchTurn()
         game.drawBoard()
     }
 
@@ -299,51 +300,55 @@ class Peice {
         let [nextX, nextY] = this.location
 
         console.log(nextX, nextY)
-        while (nextX > 0 || nextY >= 0) {
+        while (nextX > 0 && nextY > 0) {
+            nextX -= 1
+            nextY -= 1
+       
             let squareCheck = game.grid[nextX][nextY]
+
             if (squareCheck !== "") {
                 break
             }
             moves.push([nextX, nextY])
-            nextX -= 1
-            nextY -= 1
         }
 
         [nextX, nextY] = this.location
         while (nextX >= 0 && nextY < 8) {
-            let squareCheck = game.grid[nextX][nextY]
-
-            if (squareCheck !== "") {
-                break
-            }
-            moves.push([nextX, nextY])
             nextX -= 1
             nextY += 1
-        }
-
-        [nextX, nextY] = this.location
-        while (nextX < 8 && nextY < 8) {
             let squareCheck = game.grid[nextX][nextY]
 
             if (squareCheck !== "") {
                 break
             }
             moves.push([nextX, nextY])
+
+        }
+
+        [nextX, nextY] = this.location
+        while (nextX < 7 && nextY < 7) {
             nextX += 1
             nextY -= 1
-        }
+            console.log(nextX, nextY)
 
-        [nextX, nextY] = this.location
-        while (nextX < 8 && nextY < 8) {
             let squareCheck = game.grid[nextX][nextY]
 
             if (squareCheck !== "") {
                 break
             }
             moves.push([nextX, nextY])
+        }
 
+        [nextX, nextY] = this.location
+        while (nextX < 7 && nextY < 7) {
             nextX += 1
             nextY += 1
+            let squareCheck = game.grid[nextX][nextY]
+            if (squareCheck !== "") {
+                break
+            }
+            moves.push([nextX, nextY])
+
         }
 
         return moves
