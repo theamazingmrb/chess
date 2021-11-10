@@ -2,7 +2,6 @@
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     grid-template-columns: repeat(8, 1fr);
-    max-width: .5vw;
 }
 
 #board img {
@@ -10,7 +9,7 @@
 }
 
 .box {
-    min-height: 6vw;
-    min-width: 6vw;
+    min-height: 10vw;
+    min-width: 10vw;
     border: 2px solid black;
 }

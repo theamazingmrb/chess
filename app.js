@@ -100,7 +100,45 @@ let moveKey = {
                 y: 1
             }
         }
-    }
+    },
+    bishop: {
+        moves: {
+            1: {
+                x: 1,
+                y: -1
+            },
+            2: {
+                x: 1,
+                y: 1
+            },
+            3: {
+                x: -1,
+                y: 1
+            },
+            4: {
+                x: -1,
+                y: -1
+            }
+        },
+        attacks: {
+            1: {
+                x: 1,
+                y: -1
+            },
+            2: {
+                x: 1,
+                y: 1
+            },
+            3: {
+                x: -1,
+                y: 1
+            },
+            4: {
+                x: -1,
+                y: -1
+            }
+        }
+    },
 }
 
 class GameBoard {
@@ -120,7 +158,7 @@ class GameBoard {
     }
 
     setBoard() {
-        let backRank = ['rook', 'knight', 'bishop', 'queen', 'King', 'Bishop', 'knight', 'Rook']
+        let backRank = ['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook']
 
         for (let rank = 0; rank < this.grid.length; rank++) {
             for (let column = 0; column < this.grid[rank].length; column++) {
@@ -138,7 +176,6 @@ class GameBoard {
     }
 
     drawBoard() {
-        console.log('drawing board')
         board.innerHTML = ''
         for (let rank = 0; rank < this.grid.length; rank++) {
             for (let column = 0; column < this.grid[rank].length; column++) {
@@ -165,7 +202,6 @@ class GameBoard {
     }
 
     switchTurn() {
-        console.log('switching turns')
         this.turn = this.turn == "WHITE" ? "BLACK" : "WHITE"
     }
 }
@@ -183,26 +219,39 @@ class Peice {
         let moves = []
         let attacks = []
         let [x, y] = this.location
-        console.log(this)
+
         for (let key in moveKey[this.name]['moves']) {
             if (this.name == 'pawn' && this.moves >= 1 && key == 2) continue
             let newX, newY
-            console.log(moves)
             if (this.color == 'BLACK') {
                 newX = parseInt(x) + moveKey[this.name]['moves'][key].x
                 newY = parseInt(y) + moveKey[this.name]['moves'][key].y
+                if (this.name === 'bishop') {
+                    console.log('we got bishop');
+                    let diagnals = this.getDiagnals()
+                    moves = [...moves, ...diagnals]
+                    continue
+                }
             } else {
                 newX = parseInt(x) - moveKey[this.name]['moves'][key].x
                 newY = parseInt(y) - moveKey[this.name]['moves'][key].y
+
+                if (this.name === 'bishop') {
+                    console.log('we got white bishop');
+                    let diagnals = this.getDiagnals()
+                    moves = [...moves, ...diagnals]
+                    console.log
+                    continue
+                }
             }
-            console.log(newX, newY)
+            console.log(this.name, newX, newY)
             if (newX >= 8 || newY >= 8 || newX < 0 || newY < 0 || game.grid[newX][newY] !== '') continue
+
             moves.push([newX, newY])
         }
 
         for (let key in moveKey[this.name]['attacks']) {
             let newX, newY
-            console.log(moveKey[this.name]['moves'])
             if (this.color == 'BLACK') {
                 newX = parseInt(x) + moveKey[this.name]['attacks'][key].x
                 newY = parseInt(y) + moveKey[this.name]['attacks'][key].y
@@ -213,7 +262,6 @@ class Peice {
             if (newX >= 8 || newY >= 8 || newX < 0 || newY < 0) continue
 
             let squareToAttack = game.grid[newX][newY]
-            console.log('squareToAttack', squareToAttack)
             if (squareToAttack && squareToAttack !== '' && squareToAttack.color !== this.color) {
                 moves.push([newX, newY])
                 attacks.push(`${newX}-${newY}`)
@@ -221,7 +269,6 @@ class Peice {
 
         }
         game.drawBoard()
-        console.log(moves)
         for (let cordinates of moves) {
             let [x, y] = cordinates
             let [currX, currY] = this.location
@@ -245,6 +292,64 @@ class Peice {
         game.switchTurn()
         game.drawBoard()
     }
+
+    getDiagnals() {
+        let moves = []
+
+        let [nextX, nextY] = this.location
+
+        console.log(nextX, nextY)
+        while (nextX > 0 || nextY >= 0) {
+            let squareCheck = game.grid[nextX][nextY]
+            if (squareCheck !== "") {
+                break
+            }
+            moves.push([nextX, nextY])
+            nextX -= 1
+            nextY -= 1
+        }
+
+        [nextX, nextY] = this.location
+        while (nextX >= 0 && nextY < 8) {
+            let squareCheck = game.grid[nextX][nextY]
+
+            if (squareCheck !== "") {
+                break
+            }
+            moves.push([nextX, nextY])
+            nextX -= 1
+            nextY += 1
+        }
+
+        [nextX, nextY] = this.location
+        while (nextX < 8 && nextY < 8) {
+            let squareCheck = game.grid[nextX][nextY]
+
+            if (squareCheck !== "") {
+                break
+            }
+            moves.push([nextX, nextY])
+            nextX += 1
+            nextY -= 1
+        }
+
+        [nextX, nextY] = this.location
+        while (nextX < 8 && nextY < 8) {
+            let squareCheck = game.grid[nextX][nextY]
+
+            if (squareCheck !== "") {
+                break
+            }
+            moves.push([nextX, nextY])
+
+            nextX += 1
+            nextY += 1
+        }
+
+        return moves
+
+
+    }
 }
 
 const game = new GameBoard()
@@ -252,3 +357,5 @@ const game = new GameBoard()
 
 game.setBoard()
 game.drawBoard()
+
+let boshop = new Peice('bishop', 'BLACK', 5, 5)
