@@ -228,8 +228,12 @@ class GameBoard {
             ['', '', '', '', '', '', '', ''],
             ['', '', '', '', '', '', '', ''],
             ['', '', '', '', '', '', '', '']
-
         ]
+
+        this.check = {
+            WHITE: false,
+            BLACK: false
+        }
     }
 
     setBoard() {
@@ -239,12 +243,10 @@ class GameBoard {
             for (let column = 0; column < this.grid[rank].length; column++) {
                 if (rank >= 2 && rank <= 5) continue
                 if (rank == 1 || rank == 6) {
-                    let card = new Peice('pawn', rank == 1 ? 'BLACK' : 'WHITE', rank, column)
-                    this.grid[rank][column] = card
+                    this.grid[rank][column] = new Peice('pawn', rank == 1 ? 'BLACK' : 'WHITE', rank, column)
                     continue
                 }
-                let card = new Peice(backRank[column], rank >= 6 ? 'WHITE' : 'BLACK', rank, column)
-                this.grid[rank][column] = card
+                this.grid[rank][column] = new Peice(backRank[column], rank >= 6 ? 'WHITE' : 'BLACK', rank, column)
 
             }
         }
@@ -278,6 +280,23 @@ class GameBoard {
 
     switchTurn() {
         this.turn = this.turn == "WHITE" ? "BLACK" : "WHITE"
+    }
+
+    findPath(king, attacker) {
+        let path = []
+        let curr = king
+            // right diagnal check
+        while (curr.location[0] < 8 && curr.location[1] >= 0) {
+            path.push(curr)
+            if (curr == attacker) {
+                return path
+            }
+            if (curr.location[1] == 0) break
+            curr = this.grid[curr.location[0] + 1][curr.location[1] - 1] == "" ? { location: [curr.location[0] + 1, curr.location[1] - 1] } : this.grid[curr.location[0] + 1][curr.location[1] - 1]
+        }
+        if (path.includes(attacker)) {
+            return path
+        }
     }
 }
 
@@ -368,7 +387,7 @@ class Peice {
 
                 if (this.name === 'rook') {
                     let horizontals = this.getHorizontals()
-                        // set diagnal attacks
+                        // set horizontals attacks
                     horizontals.forEach(pair => {
                         let [dx, dy] = pair
                         let squareToAttack = game.grid[dx][dy]
@@ -384,7 +403,7 @@ class Peice {
                     let horizontals = this.getHorizontals()
                     let diagnals = this.getDiagnals()
 
-                    // set diagnal attacks
+                    // set horizontals attacks
                     horizontals.forEach(pair => {
                         let [dx, dy] = pair
                         let squareToAttack = game.grid[dx][dy]
@@ -472,6 +491,11 @@ class Peice {
             }
 
         }
+        if (game.check[this.color] && this.name !== 'king' && !moves.includes(game.check[this.color])) {
+            // need to enable move to peices that can block check
+            console.log('You are in check please move your king')
+            return
+        }
         game.drawBoard()
         for (let cordinates of moves) {
             let [x, y] = cordinates
@@ -483,6 +507,7 @@ class Peice {
                 this.move(`${x}-${y}`, `${currX}-${currY}`)
             })
         }
+        return moves
     }
 
     move(newCoordinates, oldCoordinates) {
@@ -492,6 +517,16 @@ class Peice {
         this.location = [parseInt(newX), parseInt(newY)]
         game.grid[newX][newY] = this
         game.grid[oldX][oldY] = ''
+            // check if next moves are possible checks
+        let nextMoves = this.posibleMoves()
+        for (let move in nextMoves) {
+            let [x, y] = nextMoves[move]
+            if (game.grid[x][y] !== "" && game.grid[x][y].name == 'king') {
+                this.color == 'WHITE' ? game.check['BLACK'] = [x, y] : game.check['WHITE'] = [x, y]
+                console.log(game.findPath(game.grid[x][y], this))
+            }
+        }
+
         game.switchTurn()
         game.drawBoard()
     }

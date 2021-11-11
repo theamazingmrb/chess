@@ -1,14 +1,21 @@
 #board {
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    grid-template-columns: repeat(8, 1fr);
+    grid-template-columns: repeat(8, minmax( 20px, 80px));
+    grid-template-columns: repeat(8, minmax(20px, 80px));
+    max-width: 650px;
 }
 
 #board img {
-    max-width: 100%;
+    max-width: 60%;
+    max-height: 60%;
 }
 
 .box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-height: 75px;
+    max-width: 75px;
     min-height: 10vw;
     min-width: 10vw;
     border: 2px solid black;
