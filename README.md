@@ -1,6 +1,6 @@
 # Chess Game
 
-![Chess Game](http://imgur.com/a/60F0U)
+![Chess Game](https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3RnNjF1bnoyMWR6OThnNXd1MjZxMzgxcHl0Nm4ydjJsNnNzM20zdSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ez2l9l9HZEOgQ9mjTi/giphy.webp)
 
 This is a browser-based chess game implemented in JavaScript. The game provides a playable chessboard where users can control the pieces and switch turns between white and black players. The game logic handles possible moves, captures, checks, and turn management.
 
