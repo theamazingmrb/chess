@@ -45,5 +45,5 @@ The game uses a grid-based approach to manage the board. Each piece has defined 
 ## Running the Game
 
 To run the game, simply open the `index.html` file in your browser. No additional setup is required.
-
+You can also play the live version https://theamazingmrb.github.io/chess/
 Enjoy your game of chess!
